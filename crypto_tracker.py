@@ -18,7 +18,6 @@ conn.commit()
        
 coin_data = {}
 while True:
-    print("\033c") #clear the contents of the terminal
     tracked_coins = db.execute('SELECT * FROM tracked_coins').fetchall()
     transactions = db.execute('SELECT coin,amount,purchase_price,purchased_with FROM purchases').fetchall()
     holdings = {}
@@ -32,9 +31,12 @@ while True:
             with urllib.request.urlopen(coin_url) as url:
                 data = json.loads(url.read().decode())[0]
                 coin_data[data['id']] = data
-                print('Current price for {0}: ${1}'.format(data['id'],data['price_usd']))
         except urllib.error.HTTPError:
             pass
+    print("\033c") #clear the contents of the terminal
+    for coin in coin_data:
+        print('Current price for {0}: ${1}'.format(coin,coin_data[coin]['price_usd']))
+        
     
     #Iterate through all purchases and accumulate totals
     for transaction in transactions:
